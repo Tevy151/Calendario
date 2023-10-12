@@ -1,4 +1,4 @@
-# Implementación en React del frontend proyecto PianoUp
+# Implementación en React del frontend proyecto
 
 ### `npm audit fix --force`
 Una vez descargado o clonado el repositorio, se debe acceder a la carpeta frontend ejecutar el comando `npm audit fix --force` dos veces para instalar los módulos necesarios del frontend
