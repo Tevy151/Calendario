@@ -1,49 +1,63 @@
 import React, { useState } from 'react';
-import '../styles/Home.css';
 import estilo from "../styles/style.css";
+import Axios from 'axios';
 
 const Home = () => {
   const months = [
     'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'
   ];
 
-  const daysInMonth = (month, year) => new Date(year, month, 0).getDate() + 1;
+  const daysInMonth = (month, year) => new Date(year, month + 1, 0).getDate();
 
   const now = new Date();
   const initialMonth = now.getMonth();
-  const initialMonthDay = daysInMonth(initialMonth + 1, now.getFullYear());
+  const initialMonthDay = daysInMonth(initialMonth, now.getFullYear());
 
   const [month, setMonth] = useState(initialMonth);
   const [monthDay, setMonthDay] = useState(initialMonthDay);
   const [selectedDate, setSelectedDate] = useState(now.getDate());
+  const [id, setId] = useState('1');
   const [events, setEvents] = useState([]);
   const [description, setDescription] = useState('');
-  const [type, setType] = useState('Social');
+  const [type, setType] = useState('Evaluacion');
+  const [asignatura, setAsignatura] = useState('mate');
+  const [dia, setDia] = useState('hoy');
 
   const prev = () => {
     if (month > 0) {
       setMonth(month - 1);
-      setMonthDay(daysInMonth(month, now.getFullYear()));
+      setMonthDay(daysInMonth(month - 1, now.getFullYear()));
     }
   };
 
   const next = () => {
     if (month < 11) {
       setMonth(month + 1);
-      setMonthDay(daysInMonth(month + 2, now.getFullYear()));
+      setMonthDay(daysInMonth(month + 1, now.getFullYear()));
     }
   };
 
-  const add = () => {
-    setEvents([
-      ...events,
-      {
-        id: `${selectedDate}${month}`,
-        description,
-        type,
-      },
-    ]);
-    setDescription('');
+  const add = (e) => {
+    e.preventDefault();
+    const newEvent = {
+      id,
+      asignatura,
+      description,
+      tipo: type,
+      dia,
+    };
+    console.log(newEvent);
+
+    Axios.post('http://localhost:3001/AddEvaluacion', newEvent)
+      .then(response => {
+        // El evento se ha agregado con éxito, puedes actualizar el estado u realizar otras acciones
+        setEvents([...events, response.data]);
+        setDescription('');
+      })
+      .catch(error => {
+        // Manejar errores aquí
+        console.error('Error al agregar el evento:', error);
+      });
   };
 
   return (
@@ -52,9 +66,9 @@ const Home = () => {
       <div className="calendar">
         <div className="calendar_left">
           <div className="header">
-            <i className="material-icons" onClick={prev}>navigate_before</i>
+            <i className="material-icons" onClick={prev}><h1>&lt;</h1></i>
             <h1>{months[month]}</h1>
-            <i className="material-icons" onClick={next}>navigate_next</i>
+            <i className="material-icons" onClick={next}><h1>&gt;</h1></i>
           </div>
           <div className="days">
             <div className="day_item">Mon</div>
@@ -83,7 +97,7 @@ const Home = () => {
               {events.map(event => (
                 event.id === `${selectedDate}${month}` && (
                   <li key={event.id} className="bounce-in">
-                    <span className="type">It's a {event.type} thing -</span>
+                    <span className="type">{event.tipo} de</span>
                     <span className="description">{event.description}</span>
                   </li>
                 )
@@ -94,12 +108,12 @@ const Home = () => {
             <input
               value={description}
               onChange={e => setDescription(e.target.value)}
-              placeholder="Enter a task for this day"
+              placeholder="Asignatura"
               type="text"
             />
             <select value={type} onChange={e => setType(e.target.value)}>
-              <option value="Social">Social</option>
-              <option value="Work">Work</option>
+              <option value="Evaluacion">Evaluación</option>
+              <option value="Entrega">Entrega</option>
             </select>
             <button type="submit">Add</button>
           </form>
