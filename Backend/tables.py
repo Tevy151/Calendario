@@ -19,7 +19,8 @@ def createTables():
     cur.execute("""
         CREATE TABLE IF NOT EXISTS Evaluaciones (
         ID varchar(30) NOT NULL PRIMARY KEY,
-        Asignatura varchar(30),
+        Asignatura varchar(30) NOT NULL,
+        Descrip varchar(30),
         Tipo varchar(30) NOT NULL,
         Dia varchar(30) NOT NULL
         );
