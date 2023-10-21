@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import estilo from "../styles/style.css";
 import Axios from 'axios';
+import axios from 'axios';
 
 const Home = () => {
   const months = [
@@ -12,16 +13,17 @@ const Home = () => {
   const now = new Date();
   const initialMonth = now.getMonth();
   const initialMonthDay = daysInMonth(initialMonth, now.getFullYear());
+  const diaa = new Date(now.getFullYear(), 0, 0)
 
   const [month, setMonth] = useState(initialMonth);
   const [monthDay, setMonthDay] = useState(initialMonthDay);
   const [selectedDate, setSelectedDate] = useState(now.getDate());
-  const [id, setId] = useState('1');
+  const [id, setId] = useState(0);
   const [events, setEvents] = useState([]);
   const [description, setDescription] = useState('');
   const [type, setType] = useState('Evaluacion');
-  const [asignatura, setAsignatura] = useState('mate');
-  const [dia, setDia] = useState('hoy');
+  const [asignatura, setAsignatura] = useState('');
+  const [dia, setDia] = useState(Math.floor((now - diaa) / (1000 * 60 * 60 * 24)));
 
   const prev = () => {
     if (month > 0) {
@@ -38,27 +40,65 @@ const Home = () => {
   };
 
   const add = (e) => {
-    e.preventDefault();
     const newEvent = {
-      id,
+      id: (events.length + 1).toString(),
       asignatura,
       description,
       tipo: type,
-      dia,
+      dia: dia.toString(),
     };
     console.log(newEvent);
 
-    Axios.post('http://localhost:3001/AddEvaluacion', newEvent)
+    Axios.post('http://localhost:3001/AddEvaluacion/', newEvent)
       .then(response => {
         // El evento se ha agregado con éxito, puedes actualizar el estado u realizar otras acciones
-        setEvents([...events, response.data]);
-        setDescription('');
       })
       .catch(error => {
         // Manejar errores aquí
         console.error('Error al agregar el evento:', error);
       });
+      setId(id+1);
+      setAsignatura('');
+      setDescription('');
+      
   };
+
+  function diaDelAnio(mes2, dia2) {
+    var diasPorMes = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+    
+    if (mes2 < 1 || mes2 > 12 || dia2 < 1 || dia2 > diasPorMes[mes2 - 1]) {
+      return "Fecha no válida";
+    }
+  
+    var diaDelAnio = 0;
+    for (var i = 0; i < mes2 - 1; i++) {
+      diaDelAnio += diasPorMes[i];
+    }
+    diaDelAnio += dia2;
+  
+    return diaDelAnio;
+  }
+
+  const newday = (index) => {
+    setSelectedDate(index + 1);
+    setDia(diaDelAnio(month+1,index + 1));
+  };
+
+  useEffect(() => {
+    getEvents();
+  },[]);
+
+  const getEvents = () => {
+    axios.get('http://localhost:3001/Eventos/')
+      .then(response => {
+        setEvents(response.data);
+      })
+      .catch(error => {
+        console.error('Error al obtener datos:', error);
+      });
+  }
+  
+  
 
   return (
     <div>
@@ -84,7 +124,7 @@ const Home = () => {
               <div
                 key={index}
                 className={`date_item ${index + 1 === selectedDate ? 'present' : ''}`}
-                onClick={() => setSelectedDate(index + 1)}
+                onClick={() => newday(index)}
               >
                 {index + 1}
               </div>
@@ -95,10 +135,10 @@ const Home = () => {
           <div className="list">
             <ul>
               {events.map(event => (
-                event.id === `${selectedDate}${month}` && (
+                parseInt(event.dia) === diaDelAnio(month+1,selectedDate) && (
                   <li key={event.id} className="bounce-in">
-                    <span className="type">{event.tipo} de</span>
-                    <span className="description">{event.description}</span>
+                    <span className="type">{event.tipo} de </span>
+                    <span className="asignatura">{event.asignatura}<br></br>{event.description}</span>
                   </li>
                 )
               ))}
@@ -108,6 +148,12 @@ const Home = () => {
             <input
               value={description}
               onChange={e => setDescription(e.target.value)}
+              placeholder="descripción"
+              type="text"
+            />
+            <input
+              value={asignatura}
+              onChange={e => setAsignatura(e.target.value)}
               placeholder="Asignatura"
               type="text"
             />
