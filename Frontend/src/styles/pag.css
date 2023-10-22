@@ -1,0 +1,83 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    text-align: left;
+    margin: 0;
+    padding: 0;
+}
+header {
+    background-color: #333;
+    color: #fff;
+    padding: 20px;
+}
+h1 {
+    margin: 0;
+}
+.container {
+    position: relative;
+    width: 80%;
+    margin: 20px auto;
+    background-color: #fff;
+    padding: 20px;
+}
+
+.eid {
+    position: absolute;
+    bottom: 10px; 
+    right: 10px; 
+}
+
+.two-column-container {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  
+  .left-column {
+    flex: 0 0 50%; 
+    padding: 10px;
+    box-sizing: border-box;
+  }
+  
+  .right-column {
+    flex: 0 0 50%; 
+    padding: 10px;
+    box-sizing: border-box;
+  }
+  
+  .contenedor-imagen {
+    position: relative; 
+    width: 800px;
+  }
+  
+  .img {
+    max-width: 100%; 
+  }
+  
+  .uppertext {
+    position: absolute;
+    top: 10px; 
+    left: 10px; 
+    color: #fff; 
+    padding: 10px;
+    text-shadow: 3px 0px 7px rgba(48, 45, 38, 0.8), 
+	  -3px 0px 7px rgba(48, 45, 38, 0.8), 
+	  0px 4px 7px rgba(48, 45, 38, 0.8);
+    }
+
+.imgt {
+    width: 650px; /* Ancho de tu contenedor, ajusta según sea necesario */
+    height: 400px; /* Alto de tu contenedor, ajusta según sea necesario */
+    overflow: hidden; /* Recorta el contenido que desborde */
+    position: relative; /* Establece la posición relativa para el contenedor */
+    filter: blur(3px);
+}
+
+    
+.darker {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7); /* Fondo semitransparente para oscurecer la imagen */
+}
