@@ -11,15 +11,12 @@ export const HomePage = () => {
         <link rel="stylesheet" type="text/css" href={style}></link>
         
         <div class="contenedor-imagen">
-          
-          <img src={USM} alt="Descripción de la imagen" height='300px'></img>
-      
+          <img src={USM} alt="Descripción de la imagen" height='250px'></img>
         </div>
+
         <div className="container">
-          
-          <h3>Bienvenido</h3>
-
-
+          <h3>¡Bienvenido al calendario USM!</h3>
+          <div>Para comenzar dirigite a la pestaña Calendario</div>
         </div>
 
       </div>

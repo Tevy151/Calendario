@@ -19,6 +19,7 @@ h1 {
     margin: 20px auto;
     background-color: #fff;
     padding: 20px;
+    text-align: center;
 }
 
 .eid {
@@ -45,7 +46,9 @@ h1 {
   }
   
   .contenedor-imagen {
-    position: relative; 
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
     width: 800px;
   }
   
