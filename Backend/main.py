@@ -1,16 +1,19 @@
 from urllib import response
 from tables import createTables
 import time
+import jwt
+from datetime import datetime, timedelta
 import psycopg2
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from typing import List
+# agregar en el frontend para poder ver el correo.  "import jwt_decode from 'jwt-decode'"";
 
 SECRET_KEY = "RANDOM"
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRES_MINUTES = 800
+ACCESS_TOKEN_EXPIRES_MINUTES = 30
 
 app = FastAPI()
 
@@ -44,6 +47,17 @@ class Evaluacion(BaseModel):
     description: str
     tipo: str
     dia: str
+    
+class User(BaseModel):
+    correo: str
+    contraseña: str
+    nombre: str
+    
+class UserLogin(BaseModel):
+    correo: str
+    contraseña: str
+
+
 
 @app.post("/AddEvaluacion/", response_model=Evaluacion)
 async def updateEvaluaciones(event: Evaluacion):
@@ -70,3 +84,38 @@ def get_eventos():
         }
         result.append(eval_dict)
     return result
+
+@app.post("/Registro/", response_model=User)
+async def updateEvaluaciones(user: User):
+    cur.execute(f"SELECT * FROM users WHERE Correo = \'{user.correo}\'")
+    repetido = cur.fetchall()
+    if(repetido):
+        return JSONResponse(content={"message": "Correo en uso"}, status_code=500)
+    else:
+        try:
+            print(f"INSERT INTO users (correo, contrasena, nombre) VALUES (\'{user.correo}\', \'{user.contraseña}\', \'{user.nombre}\');")
+            cur.execute(f"INSERT INTO users (correo, contrasena, nombre) VALUES (\'{user.correo}\', \'{user.contraseña}\', \'{user.nombre}\');")
+            conn.commit()
+            return JSONResponse(content={"message": "Evaluación agregada"}, status_code=200)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Usuario registrado correctamente: {str(e)}")
+        
+@app.post("/Login/", response_model=UserLogin)
+async def updateEvaluaciones(user: UserLogin):
+    cur.execute(f"SELECT * FROM users WHERE Correo = \'{user.correo}\'")
+    repetido = cur.fetchone()
+    if(repetido):
+        try:
+            carga = {
+                'correo': user.correo,
+                'exp': datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_EXPIRES_MINUTES)  # Tiempo de expiración 
+            }
+            llave = 'calendario_usm_infosoco_ayuda'   
+            token = jwt.encode(carga, llave, algorithm='HS256')
+            print(f"INSERT INTO users (correo, contrasena, nombre) VALUES (\'{user.correo}\', \'{user.contraseña}\');")
+            return JSONResponse(content={"token": token}, status_code=200)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Error al agregar la evaluación: {str(e)}")
+
+    else:
+        return JSONResponse(content={"message": "Correo no encontrado"}, status_code=500)

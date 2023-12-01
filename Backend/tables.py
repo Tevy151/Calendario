@@ -29,7 +29,17 @@ def createTables():
         Tipo varchar(30) NOT NULL,
         Asignatura varchar(30),
         Dia varchar(30) NOT NULL
-        );         
+        );  
+        CREATE TABLE IF NOT EXISTS users (
+        Correo varchar(30) NOT NULL PRIMARY KEY,
+        Contrasena varchar(30) NOT NULL,
+        Nombre varchar(30) NOT NULL
+        );
+        CREATE TABLE IF NOT EXISTS User_Evaluaciones (
+        Correo varchar(30) NOT NULL,
+        Id int NOT NULL
+        );   
+      
         """)    
     conn.commit()
     print("Tablas creadas correctamente")
