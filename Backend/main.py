@@ -32,7 +32,7 @@ createTables()
 # Connect to database
 while True:
     try:
-        conn = psycopg2.connect('postgresql://postgres:1234@localhost:5432/postgres')
+        conn = psycopg2.connect('postgresql://postgres:Esmeraldas22@localhost:5432/postgres')
         break
     except Exception:
         print("Esperando a la base de datos postgres, reintentando en 1 segundo...")
@@ -102,7 +102,7 @@ async def updateEvaluaciones(user: User):
         
 @app.post("/Login/", response_model=UserLogin)
 async def updateEvaluaciones(user: UserLogin):
-    cur.execute(f"SELECT * FROM users WHERE Correo = \'{user.correo}\'")
+    cur.execute(f"SELECT * FROM users WHERE Correo = \'{user.correo}\' AND Contrasena = \'{user.contraseña}\' ")
     repetido = cur.fetchone()
     if(repetido):
         try:
@@ -118,4 +118,4 @@ async def updateEvaluaciones(user: UserLogin):
             raise HTTPException(status_code=500, detail=f"Error al agregar la evaluación: {str(e)}")
 
     else:
-        return JSONResponse(content={"message": "Correo no encontrado"}, status_code=500)
+        return JSONResponse(content={"message": "Credenciales incorrectas"}, status_code=500)

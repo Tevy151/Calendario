@@ -5,7 +5,7 @@ import time
 #Al instalar 
 while True:
     try:
-        conn = psycopg2.connect('postgresql://postgres:1234@localhost:5432/postgres')
+        conn = psycopg2.connect('postgresql://postgres:Esmeraldas22@localhost:5432/postgres')
         break
     except Exception:
         print
