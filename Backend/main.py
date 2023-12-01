@@ -32,7 +32,7 @@ createTables()
 # Connect to database
 while True:
     try:
-        conn = psycopg2.connect('postgresql://postgres:Esmeraldas22@localhost:5432/postgres')
+        conn = psycopg2.connect('postgresql://postgres:1234@localhost:5432/postgres')
         break
     except Exception:
         print("Esperando a la base de datos postgres, reintentando en 1 segundo...")
