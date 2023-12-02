@@ -24,6 +24,7 @@ const Home = () => {
   const [type, setType] = useState('Evaluacion');
   const [asignatura, setAsignatura] = useState('');
   const [dia, setDia] = useState(Math.floor((now - diaa) / (1000 * 60 * 60 * 24)));
+  const [cantidadEvaluaciones, setCantidadEvaluaciones] = useState([]);
 
   const prev = () => {
     if (month > 0) {
@@ -86,6 +87,7 @@ const Home = () => {
 
   useEffect(() => {
     getEvents();
+    getCant();
   },[]);
 
   const getEvents = () => {
@@ -97,7 +99,17 @@ const Home = () => {
         console.error('Error al obtener datos:', error);
       });
   }
-  
+
+  const getCant = () => {
+    axios.get('http://localhost:3001/Cant/')
+      .then(response => {
+          setCantidadEvaluaciones(response.data);
+      })
+      .catch(error => {
+          console.error('Error al obtener la cantidad de evaluaciones:', error);
+      });
+  };
+   
   
 
   return (
@@ -124,7 +136,7 @@ const Home = () => {
             {Array.from({ length: monthDay }, (_, index) => (
               <div
                 key={index}
-                className={`date_item ${index + 1 === selectedDate ? 'present' : ''}`}
+                className={`date_item ${index + 1 === selectedDate ? 'present' : ''} ${cantidadEvaluaciones[diaDelAnio(month+1,index)] > 0 ? 'evaluation' : ''}`}
                 onClick={() => newday(index)}
               >
                 {index + 1}
@@ -134,6 +146,7 @@ const Home = () => {
         </div>
         <div className="calendar_right">
           <div className="list">
+          Cantidad de evaluaciones: {selectedDate === 1 ? cantidadEvaluaciones[diaDelAnio(month+1,selectedDate)] : cantidadEvaluaciones[diaDelAnio(month+1,selectedDate-1)]}
             <ul>
               {events.map(event => (
                 parseInt(event.dia) === diaDelAnio(month+1,selectedDate) && (
