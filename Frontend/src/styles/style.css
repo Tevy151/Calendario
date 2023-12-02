@@ -149,6 +149,19 @@ html, body {
   border-radius: 100%;
 }
 
+.evaluation {
+  background: #1b9999;
+  -webkit-transform: scale(0.7);
+          transform: scale(0.7);
+  border-radius: 50px;
+  padding: 0.95em !important;
+  color: #FFF !important;
+  z-index: 0;
+  box-shadow: 10px 10px 5px #009dd9;
+  -webkit-animation: bounce-button-in 0.45s 0s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+          animation: bounce-button-in 0.45s 0s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
 .present {
   background: #FFF;
   -webkit-transform: scale(0.7);
