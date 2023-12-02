@@ -71,19 +71,28 @@ async def updateEvaluaciones(event: Evaluacion):
 
 @app.get("/Eventos/", response_model=List[Evaluacion])
 def get_eventos():
-    cur.execute("SELECT * FROM evaluaciones ORDER BY id ASC")
-    rows = cur.fetchall()
-    result = []
-    for row in rows:
-        eval_dict = {
-            "id": row[0],
-            "asignatura": row[1],
-            "description": row[2],
-            "tipo": row[3],
-            "dia": row[4]
-        }
-        result.append(eval_dict)
-    return result
+    try:
+        cur.execute("SELECT * FROM evaluaciones ORDER BY id ASC")
+        rows = cur.fetchall()
+
+        if not rows:
+            return JSONResponse(content={"message": "No hay evaluaciones disponibles"}, status_code=404)
+
+        result = []
+        for row in rows:
+            eval_dict = {
+                "id": row[0],
+                "asignatura": row[1],
+                "description": row[2],
+                "tipo": row[3],
+                "dia": row[4]
+            }
+            result.append(eval_dict)
+
+        return result
+
+    except Exception as e:
+        return JSONResponse(content={"message": f"Error al obtener evaluaciones: {str(e)}"}, status_code=500)
 
 @app.post("/Registro/", response_model=User)
 async def updateEvaluaciones(user: User):
@@ -119,3 +128,21 @@ async def updateEvaluaciones(user: UserLogin):
 
     else:
         return JSONResponse(content={"message": "Credenciales incorrectas"}, status_code=500)
+
+@app.get("/Cant/")
+def get_eventos():
+    cur.execute("CREATE TEMPORARY TABLE IF NOT EXISTS numeros AS SELECT generate_series(1, 365) as dia;")
+    
+    cur.execute("""
+        SELECT numeros.dia, COALESCE(COUNT(evaluaciones.dia), 0) as cantidad_evaluaciones
+        FROM numeros
+        LEFT JOIN evaluaciones ON numeros.dia = evaluaciones.dia
+        GROUP BY numeros.dia
+        ORDER BY numeros.dia ASC;
+    """)
+    
+    rows = cur.fetchall()
+    result = []
+    for row in rows:
+        result.append(row[1])
+    return result
