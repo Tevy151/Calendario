@@ -18,6 +18,8 @@ function Navbar() {
     const buttonStyle = {
         color: 'white', 
       };
+    const token = localStorage.getItem('token');
+    const sesion = token ? true : false; // Verificar si existe el token
   return (
     <ThemeProvider theme={theme}>
       <AppBar position="static">
@@ -31,6 +33,18 @@ function Navbar() {
           <Link to="/nosotros">
             <Button style={buttonStyle}>Nosotros</Button>
           </Link>
+          <div style={{ marginLeft: 'auto' }}></div>
+          {sesion ? (
+            <Link to="/logout">
+            <Button style={buttonStyle}>Cerrar sesión</Button>
+          </Link>
+          ) : (
+            <Link to="/login">
+            <Button style={buttonStyle}>Ingresar</Button>
+          </Link>
+          )
+
+          }
         </Toolbar>
       </AppBar>
     </ThemeProvider>
