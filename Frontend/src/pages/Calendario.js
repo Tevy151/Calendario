@@ -30,6 +30,7 @@ const Home = () => {
     if (month > 0) {
       setMonth(month - 1);
       setMonthDay(daysInMonth(month - 1, now.getFullYear()));
+      setSelectedDate(1);
     }
   };
 
@@ -37,6 +38,7 @@ const Home = () => {
     if (month < 11) {
       setMonth(month + 1);
       setMonthDay(daysInMonth(month + 1, now.getFullYear()));
+      setSelectedDate(1);
     }
   };
 
@@ -66,8 +68,7 @@ const Home = () => {
 
   function diaDelAnio(mes2, dia2) {
     var diasPorMes = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-    
-    if (mes2 < 1 || mes2 > 12 || dia2 < 1 || dia2 > diasPorMes[mes2 - 1]) {
+    if (mes2 < 1 || mes2 > 12 || dia2 < 0 || dia2 > diasPorMes[mes2 - 1]) {
       return "Fecha no válida";
     }
   
@@ -82,7 +83,7 @@ const Home = () => {
 
   const newday = (index) => {
     setSelectedDate(index + 1);
-    setDia(diaDelAnio(month+1,index + 1));
+    setDia(diaDelAnio(month+1,selectedDate)+ 1);
   };
 
   useEffect(() => {
@@ -146,7 +147,7 @@ const Home = () => {
         </div>
         <div className="calendar_right">
           <div className="list">
-          Cantidad de evaluaciones: {selectedDate === 1 ? cantidadEvaluaciones[diaDelAnio(month+1,selectedDate)] : cantidadEvaluaciones[diaDelAnio(month+1,selectedDate-1)]}
+            <p className='white-text'>Cantidad de evaluaciones: {cantidadEvaluaciones[diaDelAnio(month+1,selectedDate-1)]} {/* Dia: {diaDelAnio(month+1,selectedDate-1)} */}</p> 
             <ul>
               {events.map(event => (
                 parseInt(event.dia) === diaDelAnio(month+1,selectedDate) && (
